@@ -7,7 +7,7 @@
         <label>Выберите роль: </label>
         <select name="role" id="role" required>
             @foreach($roles as $key => $value)
-                <option value="{{ $key }} @selected(old('role') == $key)">{{ $value }}</option>
+                <option value="{{ $key }}" @selected(old('role->value', $user?->role->value) == $key)>{{ $value }}</option>
             @endforeach
         </select>
     </div>

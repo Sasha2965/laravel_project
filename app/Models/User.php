@@ -62,4 +62,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Service::class);
     }
+
+    public function userFullName()
+    {
+        return $this->name . ' ' . $this->surname;
+    }
 }

@@ -35,7 +35,7 @@
                    <td>{{ $user->name }}</td>
                    <td>{{ $user->surname }}</td>
                    <td>{{ $user->patronymic }}</td>
-                   <td>{{ $user->role->name }}</td>
+                   <td>{{ $user->role->label() }}</td>
                    <td class="actions">
                         <a href="{{route('users.show', $user)}}" class="btn btn-info">показать</a>
                         <a href="{{ route('users.edit', $user) }}" class="btn btn-warning">изменить</a>
