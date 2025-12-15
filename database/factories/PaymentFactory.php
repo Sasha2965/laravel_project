@@ -2,11 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Enums\OrderStatusEnum;
-use App\Enums\Payments\PaymentMethodEnum;
-use App\Enums\Payments\PaymentStatusEnum;
+use App\Enums\Payment\PaymentmetHodEnum;
+use App\Enums\Payment\paymentStatusEnum;
 use App\Models\Order;
-use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,8 +21,9 @@ class PaymentFactory extends Factory
     {
         return [
             'order_id' => Order::factory(),
-            'status' => fake()->randomElement(PaymentStatusEnum::cases()),
-            'method' => fake()->randomElement(PaymentMethodEnum::cases()),
+            'status' => fake()->randomElement(paymentStatusEnum::cases()),
+            'method' => fake()->randomElement(paymentmetHodEnum::cases()),
+
         ];
     }
 }

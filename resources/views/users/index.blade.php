@@ -1,58 +1,58 @@
-@vite(['resources/css/app.css'])
+@extends('layouts.app')
+@section('title','Пользователи')
 
-    <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Пользователи</title>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <a href="{{ route('users.create') }}" class="btn btn-primary">создать нового</a>
+@section('content')
+    <div class="container">
+        <div class="header mb-3">
+            <h2 class="text-primary fw-bold mb-3">Список пользователей</h2>
+            <a href="{{route("users.create")}}" class="text-white hover:text-blue-300 px-3 py-2 rounded">Добавить</a>
+        </div>
     </div>
-</div>
 
-<div class="table-container">
-    <table class="table">
-            <thead>
+    <div class="table-container bg-white shadow p-4 rounded">
+        <table class="table table-striped">
+            <thead class="bg-primary text-white">
             <tr>
-                <th>ID</th>
-                <th>Имя</th>
-                <th>Фамилия</th>
-                <th>Отчество</th>
-                <th>Роль</th>
-                <th>Действия</th>
+                <th class="text-white">номер</th>
+                <th class="text-white">Имя</th>
+                <th class="text-white">Фамилия</th>
+                <th class="text-white">отчество</th>
+                <th class="text-white">Роль </th>
+                <th class="text-white">Действия</th>
             </tr>
             </thead>
             <tbody>
-            @forelse($users as $user)
-               <tr>
-                   <td>{{ $user->id }}</td>
-                   <td>{{ $user->name }}</td>
-                   <td>{{ $user->surname }}</td>
-                   <td>{{ $user->patronymic }}</td>
-                   <td>{{ $user->role->label() }}</td>
-                   <td class="actions">
-                        <a href="{{route('users.show', $user)}}" class="btn btn-info">показать</a>
-                        <a href="{{ route('users.edit', $user) }}" class="btn btn-warning">изменить</a>
-                       <form action="{{ route('users.destroy', $user) }}" method="POST">
-                           @csrf
-                           @method('DELETE')
-                           <button class="btn btn-danger" type="submit">удалить</button>
-                       </form>
-                   </td>
-               </tr>
+            @forelse ($users as $user)
+                <tr class="hover-bg-light">
+                    <td>{{ $user->id }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->surname }}</td>
+                    <td>{{ $user->patronymic }}</td>
+                    <td>{{ $user->role->label() }}</td>
+                    <td class="actions">
+                        <!-- Кнопка просмотра -->
+                        <a href="{{route("users.show",$user)}}" class="btn btn-info me-2">Показать</a>
+
+                        <!-- Кнопка редактирования -->
+                        <a href="{{ route('users.edit', $user) }}" class="btn btn-warning me-2">
+                            Редактировать
+                        </a>
+
+                        <!-- Форма для удаления -->
+                        <form action="{{route("users.destroy",$user)}}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="no-data">нет данных</td>
+                    <td colspan="6" class="text-center text-secondary">Нет пользователей в системе</td>
                 </tr>
             @endforelse
             </tbody>
-    </table>
-</div>
-</body>
-</html>
+        </table>
+    </div>
+
+@endsection

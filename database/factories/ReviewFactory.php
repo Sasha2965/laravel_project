@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Factories;
+namespace Database\Factories;
 
 use App\Models\Service;
 use App\Models\User;
@@ -26,3 +27,4 @@ class ReviewFactory extends Factory
         ];
     }
 }
+

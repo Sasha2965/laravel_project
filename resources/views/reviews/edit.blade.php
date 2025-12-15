@@ -1,3 +1,12 @@
-<div>
-    <!-- You must be the change you wish to see in the world. - Mahatma Gandhi -->
-</div>
+@php
+    $review = $review ?? null;
+@endphp
+    <div>
+        <a href="{{ route('reviews.index') }}">назад</a>
+        <form action="{{ route('reviews.update', $review) }}" method="POST">
+            @csrf
+            @method('PATCH')
+            @include('reviews.form')
+        </form>
+    </div>
+

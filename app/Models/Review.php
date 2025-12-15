@@ -10,19 +10,40 @@ class Review extends Model
 {
     use HasFactory;
 
+    /**
+     * Таблица для модели
+     *
+     * @var string
+     */
     protected $table = 'reviews';
 
+    /**
+     * Массив массово присваиваемых атрибутов
+     *
+     * @var array
+     */
     protected $fillable = [
         'user_id',
         'service_id',
         'rating',
-        'comment',
+        'comment'
     ];
+
+    /**
+     * Отношение к пользователю
+     *
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Отношение к сервису
+     *
+     * @return BelongsTo
+     */
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

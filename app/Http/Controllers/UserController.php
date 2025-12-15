@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRoleEnum;
 use App\Http\Requests\CreateUserRequest;
-use App\Http\Requests\UpdateUserRequst;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
 use Couchbase\Role;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +19,6 @@ class UserController extends Controller
     public function index(): View
     {
         $users = User::all();
-
         return view('users.index', compact('users'));
     }
 
@@ -27,9 +26,9 @@ class UserController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(): View
+
     {
         $roles = UserRoleEnum::options();
-
         return view('users.create', compact('roles'));
     }
 
@@ -38,15 +37,15 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request): RedirectResponse
     {
-        User::create($request->validated());
+        $user = User::create($request->validated());
 
-        return redirect()->route('users.index');
+       return redirect()->route('users.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user): View
+    public function show(user $user): View
     {
         return view('users.show', compact('user'));
     }
@@ -57,27 +56,49 @@ class UserController extends Controller
     public function edit(User $user): View
     {
         $roles = UserRoleEnum::options();
-
         return view('users.edit', compact('user', 'roles'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequst $requst, User $user): RedirectResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
-        $user->update($requst->validated());
+        $validatedData = $request->validated();
+
+        // Обработка пароля
+        if ($request->filled('password')) {
+            $validatedData['password'] = bcrypt($request->password);
+        } else {
+            unset($validatedData['password']);
+        }
+
+        // Проверка роли
+        if (isset($validatedData['role']) && !UserRoleEnum::isValid($validatedData['role'])) {
+            return redirect()->back()->withErrors(['role' => 'Неверная роль'])->withInput();
+        }
+
+        try {
+            $user->update($validatedData);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Произошла ошибка'])->withInput();
+        }
 
         return redirect()->route('users.index');
     }
 
+
+
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user): \Illuminate\Http\RedirectResponse
+    public function destroy(User $user)
     {
         $user->delete();
-
         return redirect()->route('users.index');
     }
 }

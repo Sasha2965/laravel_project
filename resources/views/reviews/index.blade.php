@@ -1,58 +1,62 @@
-@vite(['resources/css/app.css'])
+@extends('layouts.app')
+@section('title','Отзывы')
 
-    <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Отзывы</title>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <a href="{{ route('reviews.create') }}" class="btn btn-primary">создать новый</a>
+@section('content')
+    <div class="container">
+        <div class="header mb-3">
+            <h2 class="text-primary fw-bold mb-3">Отзывы</h2>
+            <a href="{{ route('reviews.create') }}" class="btn btn-primary bg-primary text-white">Создать новый отзыв</a>
+        </div>
     </div>
-</div>
 
-<div class="table-container">
-    <table class="table">
-        <thead>
-        <tr>
-            <td>ID</td>
-            <td>Пользователь</td>
-            <td>Услуга</td>
-            <td>Рейтинг</td>
-            <td>Комментарий пользователя</td>
-            <td>Действия</td>
-        </tr>
-        </thead>
-        <tbody>
-        @forelse($reviews as $review)
+    <div class="table-container bg-white shadow p-4 rounded">
+        <table class="table table-striped">
+            <thead class="bg-primary text-white">
             <tr>
-                <td>{{ $review->id }}</td>
-                <td>{{ $review->user->userFullName() }}</td>
-                <td>{{ $review->service->title }}</td>
-                <td>{{ $review->rating }} б.</td>
-                <td>{{ $review->comment }}</td>
-                <td class="actions">
-                    <a href="{{route('reviews.show', $review)}}" class="btn btn-info">показать</a>
-                    <a href="{{ route('reviews.edit', $review) }}" class="btn btn-warning">изменить</a>
-                    <form action="{{ route('reviews.destroy', $review) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger" type="submit">удалить</button>
-                    </form>
-                </td>
+                <th>ID</th>
+                <th>Пользователь</th>
+                <th>Услуга</th>
+                <th>Рейтинг</th>
+                <th>Комментарий</th>
+                <th>Действия</th>
             </tr>
-        @empty
-            <tr>
-                <td colspan="7" class="no-data">нет данных</td>
-            </tr>
-        @endforelse
-        </tbody>
-    </table>
-</div>
-</body>
-</html>
+            </thead>
+            <tbody>
+            @forelse($reviews as $review)
+                <tr class="hover-bg-light">
+                    <td>{{ $review->id }}</td>
+                    <td>{{ $review->user->name ?? 'Не указан' }}</td> <!-- Улучшили вывод пользователя -->
+                    <td>{{ $review->service->title ?? 'Не указана' }}</td> <!-- Улучшили вывод услуги -->
+                    <td>
+                        @for($i = 1; $i <= 5; $i++)
+                            <span class="star @if($i <= $review->rating) text-warning @else text-gray-400 @endif">&#9733;</span>
+                        @endfor
+                    </td>
+                    <td>{{ Str::limit($review->comment, 50) }}</td>
+                    <td class="actions">
+                        <!-- Кнопка просмотра -->
+                        <a href="{{ route('reviews.show', $review) }}" class="btn btn-info me-2">Показать</a>
+
+                        <!-- Кнопка редактирования -->
+                        <a href="{{ route('reviews.edit',$review) }}" class="btn btn-warning me-2">Редактировать</a>
+
+                        <!-- Форма для удаления -->
+                        <form action="{{ route('reviews.destroy', $review) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">
+                                Удалить
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center text-secondary">Нет данных</td>
+                </tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+@endsection

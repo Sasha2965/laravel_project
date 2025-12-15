@@ -8,6 +8,7 @@ use App\Models\Review;
 use App\Models\Service;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Factories\ServiceFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,5 +23,7 @@ class DatabaseSeeder extends Seeder
         Review::factory(10)->create();
         Order::factory(10)->create();
         Payment::factory(10)->create();
+
+
     }
 }

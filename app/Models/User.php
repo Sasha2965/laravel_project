@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,13 +10,13 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array
      */
     protected $fillable = [
         'name',
@@ -57,14 +56,15 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-
-    public function services(): HasMany
+    public function reviews(): HasMany
     {
-        return $this->hasMany(Service::class);
+        return $this->hasMany(Review::class);
+    }
+    public function userFullName(): string
+    {
+        return $this->name. ' ' . $this-> surname;
     }
 
-    public function userFullName()
-    {
-        return $this->name . ' ' . $this->surname;
-    }
+
+
 }

@@ -1,43 +1,35 @@
-@vite(['resources/css/app.css'])
+@php
+    $review = $review ?? null;
+@endphp
+    <div class="show-container">
+        <div class="show-header">
+            <h1>Отзыв #{{ $review->id }}</h1>
+            <div>
+                <a href="{{ route('users.index') }}" class="btn btn-back">Назад</a>
+            </div>
+        </div>
 
-    <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-    <title>Отзыв #{{ $review->id }}</title>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <a href="{{ route('users.index') }}" class="btn btn-primary">назад</a>
+        <div class="table-container">
+            <table class="table show-table">
+                <thead>
+                <tr>
+                    <th>Пользователь:</th>
+                    <th>Услуга:</th>
+                    <th>Оценка:</th>
+                    <th>Комментарий пользователя:</th>
+                    <th>Дата создания:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ $review->user->name }}</td>
+                    <td>{{ $review->service->name }}</td>
+                    <td>{{ $review->rating }} из 5</td>
+                    <td>{{ $review->text }}</td>
+                    <td>{{ $review->created_at }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-<div class="table-container">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Фамилия:</th>
-            <th>Имя:</th>
-            <th>Отчество:</th>
-            <th>Роль:</th>
-            <th>Эл.почта:</th>
-            <th>Аккаунт создан:</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>{{ $user->surname }}</td>
-            <td>{{ $user->name }}</td>
-            <td>{{ $user->patronymic }}</td>
-            <td>{{ $user->role->name }}</td>
-            <td>{{ $user->email }}</td>
-            <td>{{ $user->created_at }}</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-</body>
-</html>

@@ -15,9 +15,13 @@ enum UserRoleEnum: int
         };
     }
 
-    public static function options(): array {
+
+    public static function options(): array
+    {
         return collect(self::cases())
-            ->mapWithKeys(fn($role) => [$role->value => $role->label()])
+            ->mapWithKeys(function ($value) {
+                return [$value->value => $value->label()];
+            })
             ->toArray();
     }
 }

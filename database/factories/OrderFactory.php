@@ -3,13 +3,12 @@
 namespace Database\Factories;
 
 use App\Enums\OrderStatusEnum;
-use App\Enums\ServiceTypeEnum;
-use App\Models\Service;
-use App\Models\User;
+use App\Enums\ServicesTypeEnum;
+use http\Client\Curl\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Order>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
 class OrderFactory extends Factory
 {
@@ -21,10 +20,12 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'service_id' => Service::factory(),
-            'status' => fake()->randomElement(OrderStatusEnum::cases()),
-            'total_price' => fake()->numberBetween(10000, 100000),
+
+            'user_id'=> \App\Models\User::factory(),
+            'service_id'=> \App\Models\Service::factory(),
+            'status'=>fake()->randomElement(OrderStatusEnum::cases()),
+            "total"=>fake()->numberBetween(10000, 1000000),
+
         ];
     }
 }

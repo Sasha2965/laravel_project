@@ -10,29 +10,34 @@ class CreateUserAdmin extends Command
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
-    protected $signature = 'generate-admin';
+    protected $signature = 'generate:admin';
 
-    protected $description = 'Command description';
+    /**
+     * The console command description.
+     */
+    protected $description = 'Создает пользователя-администратора в системе';
 
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle()
     {
+        $password = 'root';
         $email = 'admin@admin.com';
-        $password = bcrypt('root');
-        User::factory()->create([
-            'role' => 1,
+
+
+        User::create([
             'name' => 'Админ',
-            'surname' => 'Админов',
-            'patronymic' => 'Админович',
+            'surname' => 'Админ',
+            'patronymic' => 'Админов',
             'email' => $email,
-            'password' => $password,
+            'password' => Hash::make($password),
+            'role' => 1,
         ]);
 
-        $this->info("Пользователь создан! Пароль: $password. Email: $email");
+        $this->info('Администратор успешно создан!
+Пароль: ' . $password . '
+Email: ' . $email);
     }
 }
