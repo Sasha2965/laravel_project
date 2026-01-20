@@ -6,7 +6,6 @@ use App\Enums\UserRoleEnum;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
-use Couchbase\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -39,7 +38,7 @@ class UserController extends Controller
     {
         $user = User::create($request->validated());
 
-       return redirect()->route('users.index');
+        return redirect()->route('users.index');
     }
 
     /**

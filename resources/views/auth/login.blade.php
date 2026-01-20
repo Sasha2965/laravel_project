@@ -1,107 +1,397 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="w-full max-w-md space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
-            <div class="text-center">
-                <div class="flex justify-center mb-4">
-                    <div class="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                </div>
-                <h2 class="text-3xl font-bold tracking-tight text-gray-900">
-                    Вход в систему
-                </h2>
-                <p class="mt-2 text-sm text-blue-600">
-                    Введите свои учетные данные
-                </p>
-            </div>
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <!-- Session Status -->
-            <x-auth-session-status class="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-blue-700" :status="session('status')" />
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
 
-            <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-6">
-                @csrf
+        <!-- Email Address -->
+        <div>
+            <x-input-label for="email" :value="__('почта')" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
 
-                <!-- Email Address -->
-                <div>
-                    <x-input-label for="email" :value="__('Email')" class="text-blue-700 font-medium" />
-                    <div class="relative mt-1">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <x-text-input
-                            id="email"
-                            class="block mt-1 w-full pl-10 border-blue-200 focus:border-blue-500 focus:ring-blue-500"
-                            type="email"
-                            name="email"
-                            :value="old('email')"
-                            required
-                            autofocus
-                            autocomplete="email"
-                            placeholder="example@mail.com"
-                        />
-                    </div>
-                    <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-600" />
-                </div>
+        <!-- Password -->
+        <div class="mt-4">
+            <x-input-label for="password" :value="__('пароль')" />
 
-                <!-- Password -->
-                <div class="mt-4">
-                    <x-input-label for="password" :value="__('Пароль')" class="text-blue-700 font-medium" />
-                    <div class="relative mt-1">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                        </div>
-                        <x-text-input
-                            id="password"
-                            class="block mt-1 w-full pl-10 border-blue-200 focus:border-blue-500 focus:ring-blue-500"
+            <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
                             name="password"
-                            required
-                            autocomplete="current-password"
-                            placeholder="••••••••"
-                        />
-                    </div>
-                    <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-600" />
-                </div>
+                            required autocomplete="current-password" />
 
-                <!-- Remember Me & Forgot Password -->
-                <div class="flex items-center justify-between mt-4">
-                    <label for="remember_me" class="inline-flex items-center cursor-pointer">
-                        <input
-                            id="remember_me"
-                            type="checkbox"
-                            class="rounded border-blue-300 text-blue-600 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                            name="remember"
-                        >
-                        <span class="ms-2 text-sm text-gray-700 hover:text-blue-700 transition duration-150">{{ __('Запомнить меня') }}</span>
-                    </label>
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        </div>
 
-                    @if (Route::has('password.request'))
-                        <a class="text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out" href="{{ route('password.request') }}">
-                            {{ __('Забыли пароль?') }}
-                        </a>
-                    @endif
-                </div>
+        <!-- Remember Me -->
+        <div class="block mt-4">
+            <label for="remember_me" class="inline-flex items-center">
+                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+            </label>
+        </div>
+        <!-- Submit Button & Register Link -->
+        <div class="flex items-center justify-between mt-8">
+            @if (Route::has('register'))
+                <a class="text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out" href="{{ route('register') }}">
+                    {{ __('Нет аккаунта? Зарегистрироваться') }}
+                </a>
+            @endif
+        <div class="flex items-center justify-end mt-4">
+            @if (Route::has('password.request'))
+                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                    {{ __('Забыли пароль?') }}
+                </a>
+            @endif
 
-                <!-- Submit Button & Register Link -->
-                <div class="flex items-center justify-between mt-8">
-                    @if (Route::has('register'))
-                        <a class="text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out" href="{{ route('register') }}">
-                            {{ __('Нет аккаунта? Зарегистрироваться') }}
-                        </a>
-                    @endif
-
-                    <x-primary-button class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:ring-4 focus:ring-blue-300 shadow-lg px-6 py-3 rounded-lg font-semibold transition duration-300">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                        </svg>
-                        {{ __('Войти') }}
-                    </x-primary-button>
-                </div>
-
+            <x-primary-button class="ms-3">
+                {{ __('Войти') }}
+            </x-primary-button>
+        </div>
+    </form>
 </x-guest-layout>
+<style>
+    :root {
+        --dark-bg: #0f172a;
+        --dark-bg-lighter: #1e293b;
+        --dark-bg-card: #162032;
+        --dark-border: #2d3748;
+        --dark-text: #e2e8f0;
+        --dark-text-secondary: #94a3b8;
+        --dark-accent: #3b82f6;
+        --dark-accent-hover: #2563eb;
+        --dark-danger: #ef4444;
+        --dark-danger-hover: #dc2626;
+        --dark-warning: #f59e0b;
+        --dark-success: #10b981;
+        --dark-shadow: rgba(0, 0, 0, 0.3);
+        --dark-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Общие стили страницы */
+    body {
+        background: var(--dark-bg) !important;
+        color: var(--dark-text) !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    /* Контейнер формы входа */
+    .x-guest-layout {
+        background: var(--dark-bg) !important;
+        min-height: 100vh;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Форма входа */
+    form[method="POST"][action*="login"] {
+        background: var(--dark-bg-card) !important;
+        padding: 2.5rem !important;
+        border-radius: 16px !important;
+        border: 1px solid var(--dark-border) !important;
+        box-shadow: 0 20px 40px var(--dark-shadow) !important;
+        width: 100%;
+        max-width: 450px;
+        animation: fadeIn 0.6s ease-out;
+        margin: 0 auto;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Заголовки полей */
+    x-input-label, .x-input-label {
+        display: block !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        color: var(--dark-text) !important;
+        margin-bottom: 0.5rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Поля ввода */
+    x-text-input, .x-text-input,
+    #email, #password {
+        width: 100% !important;
+        padding: 1rem !important;
+        background: rgba(30, 41, 59, 0.7) !important;
+        border: 1px solid var(--dark-border) !important;
+        border-radius: 10px !important;
+        color: var(--dark-text) !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease;
+        outline: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #email::placeholder, #password::placeholder {
+        color: var(--dark-text-secondary);
+        opacity: 0.7;
+    }
+
+    #email:focus, #password:focus {
+        border-color: var(--dark-accent) !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+        background: rgba(30, 41, 59, 0.9) !important;
+        transform: translateY(-1px);
+    }
+
+    /* Чекбокс "Remember me" */
+    #remember_me {
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+        border-color: var(--dark-border) !important;
+        background-color: var(--dark-bg-lighter) !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        border-radius: 4px;
+        position: relative;
+    }
+
+    #remember_me:checked {
+        background-color: var(--dark-accent) !important;
+        border-color: var(--dark-accent) !important;
+    }
+
+    #remember_me:checked::after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: bold;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    #remember_me:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+    }
+
+    label.inline-flex.items-center {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    span.ms-2.text-sm.text-gray-600 {
+        color: var(--dark-text-secondary) !important;
+        font-size: 0.95rem !important;
+        transition: color 0.3s ease;
+    }
+
+    label.inline-flex.items-center:hover span.ms-2.text-sm.text-gray-600 {
+        color: var(--dark-text) !important;
+    }
+
+    /* Ссылка "Forgot your password?" */
+    a.underline.text-sm.text-gray-600 {
+        color: var(--dark-text-secondary) !important;
+        text-decoration: none !important;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    a.underline.text-sm.text-gray-600:hover {
+        color: var(--dark-accent) !important;
+        background: rgba(59, 130, 246, 0.1);
+        transform: translateY(-1px);
+    }
+
+    /* Кнопка "Log in" */
+    x-primary-button, .x-primary-button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.75rem;
+        padding: 1rem 2rem !important;
+        background: var(--dark-gradient) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        min-width: 120px;
+        text-decoration: none !important;
+    }
+
+    x-primary-button:hover, .x-primary-button:hover {
+        background: linear-gradient(135deg, var(--dark-accent-hover) 0%, #764ba2 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    x-primary-button:active, .x-primary-button:active {
+        transform: translateY(0);
+    }
+
+    /* Сообщения об ошибках */
+    x-input-error, .x-input-error {
+        color: var(--dark-danger) !important;
+        font-size: 0.9rem !important;
+        margin-top: 0.5rem !important;
+        padding: 0.75rem;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 8px;
+        border-left: 3px solid var(--dark-danger);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    x-input-error::before {
+        content: '⚠️';
+        font-size: 0.9rem;
+    }
+
+    /* Session Status */
+    x-auth-session-status, .x-auth-session-status {
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--dark-success);
+        color: var(--dark-success);
+        font-weight: 500;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    //.*$
+    @media (max-width: 768px) {
+        .x-guest-layout {
+            padding: 1rem;
+        }
+
+        form[method="POST"][action*="login"] {
+            padding: 1.75rem !important;
+            margin: 1rem;
+        }
+
+        .flex.items-center.justify-end {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch !important;
+        }
+
+        a.underline.text-sm.text-gray-600 {
+            order: 2;
+            text-align: center;
+            padding: 0.75rem;
+        }
+
+        x-primary-button, .x-primary-button {
+            order: 1;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        form[method="POST"][action*="login"] {
+            padding: 1.5rem !important;
+        }
+
+        #email, #password {
+            padding: 0.875rem !important;
+        }
+
+        x-primary-button, .x-primary-button {
+            padding: 0.875rem 1.5rem !important;
+        }
+    }
+
+    /* Анимация при фокусе на форме */
+    form[method="POST"][action*="login"]:focus-within {
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+    }
+
+    /* Утилитарные классы */
+    .block {
+        display: block !important;
+    }
+
+    .mt-1 {
+        margin-top: 0.25rem !important;
+    }
+
+    .mt-2 {
+        margin-top: 0.5rem !important;
+    }
+
+    .mt-4 {
+        margin-top: 1rem !important;
+    }
+
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+
+    .ms-2 {
+        margin-left: 0.5rem !important;
+    }
+
+    .ms-3 {
+        margin-left: 0.75rem !important;
+    }
+
+    .w-full {
+        width: 100% !important;
+    }
+
+    /* Дополнительные улучшения */
+    .flex.items-center.justify-end {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        margin-top: 1.5rem !important;
+    }
+
+    /* Эффект для всей формы при загрузке */
+    @keyframes glow {
+        0%, 100% {
+            box-shadow: 0 20px 40px var(--dark-shadow);
+        }
+        50% {
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+        }
+    }
+
+    form[method="POST"][action*="login"] {
+        animation: fadeIn 0.6s ease-out, glow 3s ease-in-out 0.6s;
+    }
+</style>

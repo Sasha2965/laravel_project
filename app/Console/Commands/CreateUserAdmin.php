@@ -4,40 +4,30 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 
 class CreateUserAdmin extends Command
 {
-    /**
-     * The name and signature of the console command.
-     */
-    protected $signature = 'generate:admin';
 
-    /**
-     * The console command description.
-     */
-    protected $description = 'Создает пользователя-администратора в системе';
+    protected $signature = 'generate-admin';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+
+    protected $description = 'Command description';
+
+
+    public function handle(): void
     {
-        $password = 'root';
-        $email = 'admin@admin.com';
 
 
-        User::create([
-            'name' => 'Админ',
-            'surname' => 'Админ',
-            'patronymic' => 'Админов',
-            'email' => $email,
-            'password' => Hash::make($password),
+        $email = "admin@admin.com";
+        $password = bcrypt('root');
+        User::factory()->create([
             'role' => 1,
+            'name' => 'admin',
+            'email' => $email,
+            'password' => $password,
         ]);
 
-        $this->info('Администратор успешно создан!
-Пароль: ' . $password . '
-Email: ' . $email);
+        $this->info("Пользователь создан! Пароль: $password. Email: $email");
     }
+
 }

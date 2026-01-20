@@ -16,23 +16,15 @@ class UserUpdateRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
+        $userId = $this->user?->id;
+
         return [
             'name' => [
                 'required',
-                'string',
-                'max:255',
-            ],
-            'surname' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-            'patronymic' => [
-                'nullable', // Отчество может быть необязательным
                 'string',
                 'max:255',
             ],
@@ -40,12 +32,42 @@ class UserUpdateRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->ignore($this->user?->id),
+                Rule::unique('users', 'email')->ignore($userId),
             ],
             'password' => [
-                'nullable', // Пароль не обязателен при обновлении
-                Password::min(6),
+                'nullable',
+                Password::min(8)  // Рекомендуется минимум 8 символов
+                ->mixedCase()   // Смешанный регистр (a-z, A-Z)
+                ->numbers()     // Цифры
+                ->symbols(),    // Спецсимволы
+
             ],
+        ];
+    }
+
+    /**
+     * Подготовка данных для валидации
+     */
+    protected function prepareForValidation(): void
+    {
+        // Если пароль не указан, удаляем его из запроса
+        // чтобы не пытаться обновить на null или пустое значение
+        if ($this->password === null || $this->password === '') {
+            $this->request->remove('password');
+        }
+    }
+
+    /**
+     * Кастомные сообщения об ошибках
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Поле "Имя" обязательно для заполнения.',
+            'email.required' => 'Поле "Email" обязательно для заполнения.',
+            'email.unique' => 'Этот email уже занят.',
+            'password.min' => 'Пароль должен содержать минимум 8 символов.',
+            'password.confirmed' => 'Пароли не совпадают.',
         ];
     }
 }
